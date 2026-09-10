@@ -29,7 +29,7 @@ export BoosterInferenceData,
 # those names private; the simulator replaces the inferred magnet strengths
 # with direct values after copying the lattice.
 module _BoosterLatticeTemplate
-include(joinpath(@__DIR__, "..", "booster_lattice", "booster_run.jl"))
+include(joinpath(@__DIR__, ".", "booster_lattice", "booster_run.jl"))
 end
 
 const H_QUAD_LABELS = (
