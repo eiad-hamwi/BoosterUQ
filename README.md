@@ -8,7 +8,7 @@ using SciBmad
 
 include("./booster_lattice/booster_run.jl")
 
-DHCA2i = 17.4
+CORRECTOR_CURRENTS[:DHCA2] = 17.4
 
 t = twiss(booster)
 
