@@ -2,12 +2,11 @@ using Beamlines
 include("booster_conversions.jl")
 include("booster_lattice.jl")
 
-# Injection bump kicker calibrations (Booster Injection Kicker Data by Kip)
-IKHC1  = 0.; IKHC3 = 0.; IKHC7 = 0.; IKHD1 = 0.
-IKHCAL = 0.016 / 1200   # Bdl/I [Tm/A]
-BDOT   = 0.
-
-booster = Beamline(BOOSTER, species_ref=Species("proton"), p_over_q_ref=BRHO)
+booster = Beamline(
+    BOOSTER;
+    species_ref=Species("proton"),
+    p_over_q_ref=reference_rigidity_expression(),
+)
 
 
 ele_index = Dict(getproperty.(booster.line, :name) .=> getproperty.(booster.line, :beamline_index))
@@ -15,9 +14,6 @@ ele_index = Dict(getproperty.(booster.line, :name) .=> getproperty.(booster.line
 
 for ele in vcat(booster.line)
     if ele.kind == "SBend"
-        ele.Bn0 = BDIPO
-        ele.Bn1 = B10
-        ele.Bn2 = B20
         ele.x1_limit = -0.08
         ele.x2_limit =  0.08
         ele.y1_limit = -0.033

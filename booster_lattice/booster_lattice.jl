@@ -41,49 +41,51 @@ IPMH =  Marker();  # HORIZONTAL IPM
 # %%
 # Bend
 
-DHA1 = SBend(L=LEND,  angle=ANGD);
-DHA2 = SBend(L=LEND,  angle=ANGD);
-DHA4 = SBend(L=LEND,  angle=ANGD);
-DHA5 = SBend(L=LEND,  angle=ANGD);
-DHA7 = SBend(L=LEND,  angle=ANGD);
-DHA8 = SBend(L=LEND,  angle=ANGD);
+DIPOLE_FIELDS = dipole_field_expressions();
 
-DHB1 = SBend(L=LEND,  angle=ANGD);
-DHB2 = SBend(L=LEND,  angle=ANGD);
-DHB4 = SBend(L=LEND,  angle=ANGD);
-DHB5 = SBend(L=LEND,  angle=ANGD);
-DHB7 = SBend(L=LEND,  angle=ANGD);
-DHB8 = SBend(L=LEND,  angle=ANGD);
+DHA1 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHA2 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHA4 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHA5 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHA7 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHA8 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+
+DHB1 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHB2 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHB4 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHB5 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHB7 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHB8 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
 
 # a study of a broken vacuum chamber coil - Booster History 1992
 C7BMPED=1.0;
-DHC1 = SBend(L=LEND,  angle=ANGD);
-DHC2 = SBend(L=LEND,  angle=ANGD);
-DHC4 = SBend(L=LEND,  angle=ANGD);
-DHC5 = SBend(L=LEND,  angle=ANGD);
-DHC7 = SBend(L=LEND,  angle=ANGD*C7BMPED);
-DHC8 = SBend(L=LEND,  angle=ANGD);
+DHC1 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHC2 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHC4 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHC5 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHC7 = SBend(L=LEND, angle=ANGD*C7BMPED; DIPOLE_FIELDS...);
+DHC8 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
 
-DHD1 = SBend(L=LEND,  angle=ANGD);
-DHD2 = SBend(L=LEND,  angle=ANGD);
-DHD4 = SBend(L=LEND,  angle=ANGD);
-DHD5 = SBend(L=LEND,  angle=ANGD);
-DHD7 = SBend(L=LEND,  angle=ANGD);
-DHD8 = SBend(L=LEND,  angle=ANGD);
+DHD1 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHD2 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHD4 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHD5 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHD7 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHD8 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
 
-DHE1 = SBend(L=LEND,  angle=ANGD);
-DHE2 = SBend(L=LEND,  angle=ANGD);
-DHE4 = SBend(L=LEND,  angle=ANGD);
-DHE5 = SBend(L=LEND,  angle=ANGD);
-DHE7 = SBend(L=LEND,  angle=ANGD);
-DHE8 = SBend(L=LEND,  angle=ANGD);
+DHE1 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHE2 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHE4 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHE5 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHE7 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHE8 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
 
-DHF1 = SBend(L=LEND,  angle=ANGD);
-DHF2 = SBend(L=LEND,  angle=ANGD);
-DHF4 = SBend(L=LEND,  angle=ANGD);
-DHF5 = SBend(L=LEND,  angle=ANGD);
-DHF7 = SBend(L=LEND,  angle=ANGD);
-DHF8 = SBend(L=LEND,  angle=ANGD);
+DHF1 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHF2 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHF4 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHF5 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHF7 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
+DHF8 = SBend(L=LEND, angle=ANGD; DIPOLE_FIELDS...);
 end
 
 # %%
@@ -101,77 +103,93 @@ L029=Drift(L=0.289875+LVDS);
 L031=Drift(L=0.295375+LHDS);
 L031s=Drift(L=(0.295375+LHDS-LENACQ)/2.);
  
+QVA1 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :A1));
+QVA3 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :A3));
+QVA5 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :A5));
+QVA7 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :A7));
 
+QHA2 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :A2));
+QHA4 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :A4));
+QHA6 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :A6));
+QHA8 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :A8));
 
-QVC1= Quadrupole(L=LENQV, Bn1L=CBLV(IQVC1)); 
-QVC3= Quadrupole(L=LENQV, Bn1L=CBLV(IQVC3));
-QVC5= Quadrupole(L=LENQV, Bn1L=CBLV(IQVC5));
-QVC7= Quadrupole(L=LENQV, Bn1L=CBLV(IQVC7));
+QVB1 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :B1));
+QVB3 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :B3));
+QVB5 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :B5));
+QVB7 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :B7));
 
-QHC2= Quadrupole(L=LENQH, Bn1L=CBLH(IQHC2));
-QHC4= Quadrupole(L=LENQH, Bn1L=CBLH(IQHC4));
-QHC6= Quadrupole(L=LENQH, Bn1L=CBLH(IQHC6));
-QHC8= Quadrupole(L=LENQH, Bn1L=CBLH(IQHC8));
+QHB2 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :B2));
+QHB4 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :B4));
+QHB6 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :B6));
+QHB8 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :B8));
 
-QVD1= Quadrupole(L=LENQV, Bn1L=CBLV(IQVD1));
-QVD3= Quadrupole(L=LENQV, Bn1L=CBLV(IQVD3));
-QVD5= Quadrupole(L=LENQV, Bn1L=CBLVear(IQVD5));  # ear chamber
-QVD7= Quadrupole(L=LENQV, Bn1L=CBLV(IQVD7));
+QVC1 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :C1));
+QVC3 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :C3));
+QVC5 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :C5));
+QVC7 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :C7));
 
-QHD2= Quadrupole(L=LENQH, Bn1L=CBLH(IQHD2));
-QHD4= Quadrupole(L=LENQH, Bn1L=CBLH(IQHD4));
-QHD6= Quadrupole(L=LENQH, Bn1L=CBLH(IQHD6));
-QHD8= Quadrupole(L=LENQH, Bn1L=CBLH(IQHD8));
+QHC2 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :C2));
+QHC4 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :C4));
+QHC6 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :C6));
+QHC8 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :C8));
 
-QVE1= Quadrupole(L=LENQV, Bn1L=CBLV(IQVE1));
-QVE3= Quadrupole(L=LENQV, Bn1L=CBLV(IQVE3));
-QVE5= Quadrupole(L=LENQV, Bn1L=CBLV(IQVE5));
-QVE7= Quadrupole(L=LENQV, Bn1L=CBLV(IQVE7));
+QVD1 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :D1));
+QVD3 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :D3));
+QVD5 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :D5)); # ear chamber
+QVD7 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :D7));
 
-QHE2= Quadrupole(L=LENQH, Bn1L=CBLH(IQHE2));
-QHE4= Quadrupole(L=LENQH, Bn1L=CBLH(IQHE4));
-QHE6= Quadrupole(L=LENQH, Bn1L=CBLH(IQHE6));
-QHE8= Quadrupole(L=LENQH, Bn1L=CBLH(IQHE8));
+QHD2 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :D2));
+QHD4 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :D4));
+QHD6 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :D6));
+QHD8 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :D8));
 
-QVF1= Quadrupole(L=LENQV, Bn1L=CBLV(IQVF1));
-QVF3= Quadrupole(L=LENQV, Bn1L=CBLV(IQVF3));
-QVF5= Quadrupole(L=LENQV, Bn1L=CBLVear(IQVF5));  # ear chamber
-QVF7= Quadrupole(L=LENQV, Bn1L=CBLV(IQVF7));
+QVE1 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :E1));
+QVE3 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :E3));
+QVE5 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :E5));
+QVE7 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :E7));
 
-QHF2= Quadrupole(L=LENQH, Bn1L=CBLH(IQHF2));
-QHF4= Quadrupole(L=LENQH, Bn1L=CBLH(IQHF4));
-QHF6= Quadrupole(L=LENQH, Bn1L=CBLH(IQHF6));
-QHF8= Quadrupole(L=LENQH, Bn1L=CBLH(IQHF8));
+QHE2 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :E2));
+QHE4 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :E4));
+QHE6 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :E6));
+QHE8 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :E8));
 
-QVA1= Quadrupole(L=LENQV, Bn1L=CBLV(IQVA1));
-QVA3= Quadrupole(L=LENQV, Bn1L=CBLV(IQVA3));
-QVA5= Quadrupole(L=LENQV, Bn1L=CBLV(IQVA5));
-QVA7= Quadrupole(L=LENQV, Bn1L=CBLV(IQVA7));
+QVF1 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :F1));
+QVF3 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :F3));
+QVF5 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :F5)); # ear chamber
+QVF7 = Quadrupole(L=LENQV, Bn1L=quad_integrated_gradient(:V, :F7));
 
-QHA2= Quadrupole(L=LENQH, Bn1L=CBLH(IQHA2));
-QHA4= Quadrupole(L=LENQH, Bn1L=CBLH(IQHA4));
-QHA6= Quadrupole(L=LENQH, Bn1L=CBLH(IQHA6));
-QHA8= Quadrupole(L=LENQH, Bn1L=CBLH(IQHA8));
-
-QVB1= Quadrupole(L=LENQV, Bn1L=CBLV(IQVB1));
-QVB3= Quadrupole(L=LENQV, Bn1L=CBLV(IQVB3));
-QVB5= Quadrupole(L=LENQV, Bn1L=CBLV(IQVB5));
-QVB7= Quadrupole(L=LENQV, Bn1L=CBLV(IQVB7));
-
-QHB2= Quadrupole(L=LENQH, Bn1L=CBLH(IQHB2));
-QHB4= Quadrupole(L=LENQH, Bn1L=CBLH(IQHB4));
-QHB6= Quadrupole(L=LENQH, Bn1L=CBLH(IQHB6));
-QHB8= Quadrupole(L=LENQH, Bn1L=CBLH(IQHB8));
+QHF2 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :F2));
+QHF4 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :F4));
+QHF6 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :F6));
+QHF8 = Quadrupole(L=LENQH, Bn1L=quad_integrated_gradient(:H, :F8));
 
 # AC Quad
 ACQA4= Quadrupole(L=LENACQ, Bn1L=DefExpr(() -> 6.7e-3 * IACQA4 * LENQV));
 end
 # %%
 # Sextupoles
-SV_Bn2L=DefExpr(() -> -0.013144*ISV)
-SH_Bn2L=DefExpr(() ->  0.013144*ISH)
+SV_Bn2L=DefExpr(() -> chromatic_sextupole_integrated_field(:V, ISV)) # -0.013144 * ISV
+SH_Bn2L=DefExpr(() -> chromatic_sextupole_integrated_field(:H, ISH)) #  0.013144 * ISH
 
 @elements begin
+SVA1= Sextupole(L=LENS, Bn2L=SV_Bn2L);
+SHA2= Sextupole(L=LENS, Bn2L=SH_Bn2L);
+SVA3= Sextupole(L=LENS, Bn2L=SV_Bn2L);
+SHA4= Sextupole(L=LENS, Bn2L=SH_Bn2L);
+SVA5= Sextupole(L=LENS, Bn2L=SV_Bn2L);
+SHA6= Sextupole(L=LENS, Bn2L=SH_Bn2L);
+SVA7= Sextupole(L=LENS, Bn2L=SV_Bn2L);
+SHA8= Sextupole(L=LENS, Bn2L=SH_Bn2L);
+
+SVB1= Sextupole(L=LENS, Bn2L=SV_Bn2L);
+SHB2= Sextupole(L=LENS, Bn2L=SH_Bn2L);
+SVB3= Sextupole(L=LENS, Bn2L=SV_Bn2L);
+SHB4= Sextupole(L=LENS, Bn2L=sextupole_integrated_field(:SHB4));  # for 13/3 extraction
+SVB5= Sextupole(L=LENS, Bn2L=SV_Bn2L);
+SHB6= Sextupole(L=LENS, Bn2L=SH_Bn2L);
+SVB7= Sextupole(L=LENS, Bn2L=SV_Bn2L);
+SHB8= Sextupole(L=LENS, Bn2L=SH_Bn2L);
+
 SVC1= Sextupole(L=LENS, Bn2L=SV_Bn2L);
 SHC2= Sextupole(L=LENS, Bn2L=SH_Bn2L);
 SVC3= Sextupole(L=LENS, Bn2L=SV_Bn2L);
@@ -179,7 +197,8 @@ SHC4= Sextupole(L=LENS, Bn2L=SH_Bn2L);
 SVC5= Sextupole(L=LENS, Bn2L=SV_Bn2L);
 SHC6= Sextupole(L=LENS, Bn2L=SH_Bn2L);
 SVC7= Sextupole(L=LENS, Bn2L=SV_Bn2L);
-SHC8= Sextupole(L=LENS, Bn2L=DefExpr(() ->  0.013144*(ISH+ISEBC8F8)));
+SHC8= Sextupole(L=LENS, Bn2L=sextupole_integrated_field(:SHC8));
+
 SVD1= Sextupole(L=LENS, Bn2L=SV_Bn2L);
 SHD2= Sextupole(L=LENS, Bn2L=SH_Bn2L);
 SVD3= Sextupole(L=LENS, Bn2L=SV_Bn2L);
@@ -192,7 +211,7 @@ SHD8= Sextupole(L=LENS, Bn2L=SH_Bn2L);
 SVE1= Sextupole(L=LENS, Bn2L=SV_Bn2L);
 SHE2= Sextupole(L=LENS, Bn2L=SH_Bn2L);
 SVE3= Sextupole(L=LENS, Bn2L=SV_Bn2L);
-SHE4= Sextupole(L=LENS, Bn2L=DefExpr(() ->  0.013144*(ISH-ISEBB4E4)));
+SHE4= Sextupole(L=LENS, Bn2L=sextupole_integrated_field(:SHE4));
 SVE5= Sextupole(L=LENS, Bn2L=SV_Bn2L);
 SHE6= Sextupole(L=LENS, Bn2L=SH_Bn2L);
 SVE7= Sextupole(L=LENS, Bn2L=SV_Bn2L);
@@ -205,25 +224,7 @@ SHF4= Sextupole(L=LENS, Bn2L=SH_Bn2L);
 SVF5= Sextupole(L=LENS, Bn2L=SV_Bn2L);
 SHF6= Sextupole(L=LENS, Bn2L=SH_Bn2L);
 SVF7= Sextupole(L=LENS, Bn2L=SV_Bn2L);
-SHF8= Sextupole(L=LENS, Bn2L=DefExpr(() ->  0.013144*(ISH-ISEBC8F8)));   # for 13/3 extraction
-
-SVA1= Sextupole(L=LENS, Bn2L=SV_Bn2L);
-SHA2= Sextupole(L=LENS, Bn2L=SH_Bn2L);
-SVA3= Sextupole(L=LENS, Bn2L=SV_Bn2L);
-SHA4= Sextupole(L=LENS, Bn2L=SH_Bn2L);
-SVA5= Sextupole(L=LENS, Bn2L=SV_Bn2L);
-SHA6= Sextupole(L=LENS, Bn2L=SH_Bn2L);
-SVA7= Sextupole(L=LENS, Bn2L=SV_Bn2L);
-SHA8= Sextupole(L=LENS, Bn2L=SH_Bn2L);
- 
-SVB1= Sextupole(L=LENS, Bn2L=SV_Bn2L);
-SHB2= Sextupole(L=LENS, Bn2L=SH_Bn2L);
-SVB3= Sextupole(L=LENS, Bn2L=SV_Bn2L);
-SHB4= Sextupole(L=LENS, Bn2L=DefExpr(() ->  0.013144*(ISH-ISEBB4E4)));  # for 13/3 extraction
-SVB5= Sextupole(L=LENS, Bn2L=SV_Bn2L);
-SHB6= Sextupole(L=LENS, Bn2L=SH_Bn2L);
-SVB7= Sextupole(L=LENS, Bn2L=SV_Bn2L);
-SHB8= Sextupole(L=LENS, Bn2L=SH_Bn2L);
+SHF8= Sextupole(L=LENS, Bn2L=sextupole_integrated_field(:SHF8));   # for 13/3 extraction
 
 # %%
 # Slow correctors
@@ -232,58 +233,86 @@ SHB8= Sextupole(L=LENS, Bn2L=SH_Bn2L);
 #  Bdl/A = 9.75e-5 Tm/A
 #  so a kick (in radians) is (1/Brho)*(Bdl/A)*amps
  
-DHCC2=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCC2i));
-DHCC4=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCC4i));
-DHCC6=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCC6i));
-DHCC8=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCC8i));
-DHCD2=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCD2i));
-DHCD4=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCD4i));
-DHCD6=HKicker();                                    #missing
-DHCD8=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCD8i));
-DHCE2=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCE2i));
-DHCE4=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCE4i));
-DHCE6=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCE6i));
-DHCE8=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCE8i));
-DHCF2=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCF2i));
-DHCF4=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCF4i));
-DHCF6=HKicker();                                    #missing
-DHCF8=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCF8i));
-DHCA2=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCA2i));
-DHCA4=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCA4i));
-DHCA6=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCA6i));
-DHCA8=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCA8i));
-DHCB2=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCB2i));
-DHCB4=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCB4i));
-DHCB6=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCB6i));
-DHCB8=HKicker(Bn0L= DefExpr(() -> CorCalib*DHCB8i));
+DVCA1=VKicker(Bs0L=corrector_integrated_field(:DVCA1));
+DVCA3=VKicker(Bs0L=corrector_integrated_field(:DVCA3));
+DVCA5=VKicker(Bs0L=corrector_integrated_field(:DVCA5));
+DVCA7=VKicker(Bs0L=corrector_integrated_field(:DVCA7));
 
-DVCC1=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCC1i));
-DVCC3=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCC3i));
-DVCC5=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCC5i));
-DVCC7=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCC7i));
-DVCD1=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCD1i));
-DVCD3=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCD3i));
-DVCD5=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCD5i));
-DVCD7=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCD7i));
-DVCE1=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCE1i));
-DVCE3=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCE3i));
-DVCE5=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCE5i));
-DVCE7=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCE7i));
-DVCF1=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCF1i));
-DVCF3=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCF3i));
-DVCF5=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCF5i));
-DVCF7=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCF7i));
-DVCA1=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCA1i));
-DVCA3=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCA3i));
-DVCA5=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCA5i));
-DVCA7=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCA7i));
-DVCB1=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCB1i));
-DVCB3=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCB3i));
-DVCB5=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCB5i));
-DVCB7=VKicker(Bs0L= DefExpr(() -> CorCalib*DVCB7i));
+DHCA2=HKicker(Bn0L=corrector_integrated_field(:DHCA2));
+DHCA4=HKicker(Bn0L=corrector_integrated_field(:DHCA4));
+DHCA6=HKicker(Bn0L=corrector_integrated_field(:DHCA6));
+DHCA8=HKicker(Bn0L=corrector_integrated_field(:DHCA8));
+
+DVCB1=VKicker(Bs0L=corrector_integrated_field(:DVCB1));
+DVCB3=VKicker(Bs0L=corrector_integrated_field(:DVCB3));
+DVCB5=VKicker(Bs0L=corrector_integrated_field(:DVCB5));
+DVCB7=VKicker(Bs0L=corrector_integrated_field(:DVCB7));
+
+DHCB2=HKicker(Bn0L=corrector_integrated_field(:DHCB2));
+DHCB4=HKicker(Bn0L=corrector_integrated_field(:DHCB4));
+DHCB6=HKicker(Bn0L=corrector_integrated_field(:DHCB6));
+DHCB8=HKicker(Bn0L=corrector_integrated_field(:DHCB8));
+
+DVCC1=VKicker(Bs0L=corrector_integrated_field(:DVCC1));
+DVCC3=VKicker(Bs0L=corrector_integrated_field(:DVCC3));
+DVCC5=VKicker(Bs0L=corrector_integrated_field(:DVCC5));
+DVCC7=VKicker(Bs0L=corrector_integrated_field(:DVCC7));
+
+DHCC2=HKicker(Bn0L=corrector_integrated_field(:DHCC2));
+DHCC4=HKicker(Bn0L=corrector_integrated_field(:DHCC4));
+DHCC6=HKicker(Bn0L=corrector_integrated_field(:DHCC6));
+DHCC8=HKicker(Bn0L=corrector_integrated_field(:DHCC8));
+
+DVCD1=VKicker(Bs0L=corrector_integrated_field(:DVCD1));
+DVCD3=VKicker(Bs0L=corrector_integrated_field(:DVCD3));
+DVCD5=VKicker(Bs0L=corrector_integrated_field(:DVCD5));
+DVCD7=VKicker(Bs0L=corrector_integrated_field(:DVCD7));
+
+DHCD2=HKicker(Bn0L=corrector_integrated_field(:DHCD2));
+DHCD4=HKicker(Bn0L=corrector_integrated_field(:DHCD4));
+DHCD6=HKicker();                                    #missing
+DHCD8=HKicker(Bn0L=corrector_integrated_field(:DHCD8));
+
+DVCE1=VKicker(Bs0L=corrector_integrated_field(:DVCE1));
+DVCE3=VKicker(Bs0L=corrector_integrated_field(:DVCE3));
+DVCE5=VKicker(Bs0L=corrector_integrated_field(:DVCE5));
+DVCE7=VKicker(Bs0L=corrector_integrated_field(:DVCE7));
+
+DHCE2=HKicker(Bn0L=corrector_integrated_field(:DHCE2));
+DHCE4=HKicker(Bn0L=corrector_integrated_field(:DHCE4));
+DHCE6=HKicker(Bn0L=corrector_integrated_field(:DHCE6));
+DHCE8=HKicker(Bn0L=corrector_integrated_field(:DHCE8));
+
+DVCF1=VKicker(Bs0L=corrector_integrated_field(:DVCF1));
+DVCF3=VKicker(Bs0L=corrector_integrated_field(:DVCF3));
+DVCF5=VKicker(Bs0L=corrector_integrated_field(:DVCF5));
+DVCF7=VKicker(Bs0L=corrector_integrated_field(:DVCF7));
+
+DHCF2=HKicker(Bn0L=corrector_integrated_field(:DHCF2));
+DHCF4=HKicker(Bn0L=corrector_integrated_field(:DHCF4));
+DHCF6=HKicker();                                    #missing
+DHCF8=HKicker(Bn0L=corrector_integrated_field(:DHCF8));
 
 # %%
 # Beam position monitors
+
+PUEVA1 = LineElement(kind="BPM");
+PUEHA2 = LineElement(kind="BPM");
+PUEVA3 = LineElement(kind="BPM");
+PUEHA4 = LineElement(kind="BPM");
+PUEVA5 = LineElement(kind="BPM");
+PUEHA6 = LineElement(kind="BPM");
+PUEVA7 = LineElement(kind="BPM");
+PUEHA8 = LineElement(kind="BPM");
+
+PUEVB1 = LineElement(kind="BPM");
+PUEHB2 = LineElement(kind="BPM");
+PUEVB3 = LineElement(kind="BPM");
+PUEHB4 = LineElement(kind="BPM");
+PUEVB5 = LineElement(kind="BPM");
+PUEHB6 = LineElement(kind="BPM");
+PUEVB7 = LineElement(kind="BPM");
+PUEHB8 = LineElement(kind="BPM");
 
 PUEVC1 = LineElement(kind="BPM");
 PUEHC2 = LineElement(kind="BPM");
@@ -321,24 +350,6 @@ PUEHF6 = LineElement(kind="BPM");       #missing
 PUEVF7 = LineElement(kind="BPM");
 PUEHF8 = LineElement(kind="BPM");
 
-PUEVA1 = LineElement(kind="BPM");
-PUEHA2 = LineElement(kind="BPM");
-PUEVA3 = LineElement(kind="BPM");
-PUEHA4 = LineElement(kind="BPM");
-PUEVA5 = LineElement(kind="BPM");
-PUEHA6 = LineElement(kind="BPM");
-PUEVA7 = LineElement(kind="BPM");
-PUEHA8 = LineElement(kind="BPM");
-
-PUEVB1 = LineElement(kind="BPM");
-PUEHB2 = LineElement(kind="BPM");
-PUEVB3 = LineElement(kind="BPM");
-PUEHB4 = LineElement(kind="BPM");
-PUEVB5 = LineElement(kind="BPM");
-PUEHB6 = LineElement(kind="BPM");
-PUEVB7 = LineElement(kind="BPM");
-PUEHB8 = LineElement(kind="BPM");
-
 MONH= Marker();
 MONV= Marker();
 
@@ -368,7 +379,6 @@ end
 
 # Extraction Kickers
 
-D03kick=0.0;
 F3Kick = 0.0;
 
 @elements begin

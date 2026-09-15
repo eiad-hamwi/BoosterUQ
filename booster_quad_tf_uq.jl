@@ -23,13 +23,13 @@ export BoosterInferenceData,
     predict_orbits,
     predict_orbits_and_jacobian,
     set_corrector_currents!,
-    set_quad_factors!
+    set_dipole_current!,
+    set_quad_strengths!,
+    set_sextupole_current!
 
-# The translated lattice defines hundreds of names used by its DefExprs. Keep
-# those names private; the simulator replaces the inferred magnet strengths
-# with direct values after copying the lattice.
+
 module _BoosterLatticeTemplate
-include(joinpath(@__DIR__, ".", "booster_lattice", "booster_run.jl"))
+include(joinpath(@__DIR__, "booster_lattice", "booster_run.jl"))
 end
 
 const H_QUAD_LABELS = (
@@ -49,7 +49,7 @@ const H_BPM_LABELS = (
 )
 const V_BPM_LABELS = (
     :A1, :A3, :A5, :A7, :B1, :B5, :B7, :C1, :C3, :C5, :D3, :D5,
-    :E3, :E5, :E7, :F1, :F3, :F5,
+    :E5, :E7, :F1, :F3, :F5, :F7,
 )
 const H_BPM_NAMES = Tuple("PUEH" * string(label) for label in H_BPM_LABELS)
 const V_BPM_NAMES = Tuple("PUEV" * string(label) for label in V_BPM_LABELS)
@@ -77,7 +77,9 @@ end
     BoosterSimulator(; sensitivity=GTPSASensitivity())
 
 An independently mutable Booster lattice with one cached first-order GTPSA
-workspace. Use one simulator per process or concurrently executing chain.
+workspace. The main-magnet operating point is supplied to each evaluation,
+not stored in the simulator. Use one simulator per process or concurrently
+executing chain.
 """
 mutable struct BoosterSimulator{L,S<:GTPSASensitivity,D,T}
     lattice::L
@@ -85,8 +87,9 @@ mutable struct BoosterSimulator{L,S<:GTPSASensitivity,D,T}
     descriptor::D
     phase_variables::Vector{T}
     quad_parameters::Vector{T}
+    dipole_indices::Vector{Int}
     quad_indices::Vector{Int}
-    quad_base_strengths::Vector{Float64}
+    sext_indices::Vector{Int}
     hcorrector_indices::Vector{Int}
     vcorrector_indices::Vector{Int}
     bpm_by_index::Dict{Int,Tuple{Int,Int}}
@@ -94,7 +97,9 @@ mutable struct BoosterSimulator{L,S<:GTPSASensitivity,D,T}
     coasting_beam::Bool
 end
 
-function BoosterSimulator(; sensitivity::GTPSASensitivity=GTPSASensitivity())
+function BoosterSimulator(;
+    sensitivity::GTPSASensitivity=GTPSASensitivity(),
+)
     template = _BoosterLatticeTemplate.booster
     lattice = Beamline(
         deepcopy(collect(template.line));
@@ -103,24 +108,21 @@ function BoosterSimulator(; sensitivity::GTPSASensitivity=GTPSASensitivity())
     )
     index = Dict(Symbol(element.name) => i for (i, element) in enumerate(lattice.line))
 
+    dipole_indices = findall(element -> element.kind == "SBend", lattice.line)
     quad_indices = [
         [index[Symbol("QH", label)] for label in H_QUAD_LABELS]
         [index[Symbol("QV", label)] for label in V_QUAD_LABELS]
     ]
-    quad_base_strengths = Float64[
+    sext_indices = vcat(
         [
-            _BoosterLatticeTemplate.CBLH(
-                getfield(_BoosterLatticeTemplate, Symbol("IQH", label))
-            )() for label in H_QUAD_LABELS
-        ]
+            index[Symbol("SH", sector, position)]
+            for sector in 'A':'F' for position in (2, 4, 6, 8)
+        ],
         [
-            (label in (:D5, :F5) ?
-             _BoosterLatticeTemplate.CBLVear :
-             _BoosterLatticeTemplate.CBLV)(
-                getfield(_BoosterLatticeTemplate, Symbol("IQV", label))
-            )() for label in V_QUAD_LABELS
-        ]
-    ]
+            index[Symbol("SV", sector, position)]
+            for sector in 'A':'F' for position in (1, 3, 5, 7)
+        ],
+    )
 
     # A zero index represents the two requested horizontal correctors which do
     # not exist or are turned off in the physical lattice.
@@ -144,8 +146,9 @@ function BoosterSimulator(; sensitivity::GTPSASensitivity=GTPSASensitivity())
         descriptor,
         phase_variables,
         quad_parameters,
+        dipole_indices,
         quad_indices,
-        quad_base_strengths,
+        sext_indices,
         hcorrector_indices,
         vcorrector_indices,
         bpm_by_index,
@@ -153,7 +156,18 @@ function BoosterSimulator(; sensitivity::GTPSASensitivity=GTPSASensitivity())
         false,
     )
     set_corrector_currents!(simulator, zeros(N_HC), zeros(N_VC))
-    set_quad_factors!(simulator, ones(N_QH), ones(N_QV))
+    set_dipole_current!(simulator, _BoosterLatticeTemplate.IDIPO)
+    set_quad_strengths!(
+        simulator,
+        _BoosterLatticeTemplate.IDIPO,
+        _BoosterLatticeTemplate.IQHC,
+        _BoosterLatticeTemplate.IQVC,
+        ones(N_QH),
+        ones(N_QV),
+    )
+    set_sextupole_current!(
+        simulator, _BoosterLatticeTemplate.ISH, _BoosterLatticeTemplate.ISV
+    )
     simulator.coasting_beam =
         SciBmad.coast_check(lattice, sensitivity.closed_orbit_adtype)
     return simulator
@@ -169,48 +183,127 @@ function set_corrector_currents!(
     length(currents_vc) == N_VC ||
         throw(ArgumentError("currents_vc must contain $N_VC values"))
 
-    calibration = _BoosterLatticeTemplate.CorCalib
     for (element_index, current) in zip(simulator.hcorrector_indices, currents_hc)
         iszero(element_index) && continue
-        simulator.lattice.line[element_index].Bn0L = calibration * current
+        simulator.lattice.line[element_index].Bn0L =
+            _BoosterLatticeTemplate.corrector_integrated_field(current)
     end
     for (element_index, current) in zip(simulator.vcorrector_indices, currents_vc)
-        simulator.lattice.line[element_index].Bs0L = calibration * current
+        simulator.lattice.line[element_index].Bs0L =
+            _BoosterLatticeTemplate.corrector_integrated_field(current)
     end
     return nothing
 end
 
-function set_quad_factors!(
+"""
+    set_dipole_current!(simulator, idipo, [bdot=0])
+
+Update the reference rigidity and all dipole multipoles from the main-magnet
+current and ramp rate.
+"""
+function set_dipole_current!(
     simulator::BoosterSimulator,
+    idipo::Real,
+    bdot::Real=0,
+)
+    all(isfinite, (idipo, bdot)) ||
+        throw(ArgumentError("IDIPO and bdot must be finite"))
+
+    dipoles = _BoosterLatticeTemplate.dipole_strengths(idipo, bdot)
+    simulator.lattice.p_over_q_ref = dipoles.p_over_q_ref
+    for element_index in simulator.dipole_indices
+        element = simulator.lattice.line[element_index]
+        element.Bn0 = dipoles.Bn0
+        element.Bn1 = dipoles.Bn1
+        element.Bn2 = dipoles.Bn2
+    end
+    return nothing
+end
+
+"""
+    set_quad_strengths!(simulator, idipo, iqhc, iqvc, vars_qh, vars_qv,
+                        [bdot=0]; tpsa=false)
+
+Update the quadrupole integrated gradients from the measured main-magnet and
+tune-trim currents. `vars_qh` and `vars_qv` are the inferred per-magnet scale
+factors. The conversion equations are shared with `booster_conversions.jl`.
+"""
+function set_quad_strengths!(
+    simulator::BoosterSimulator,
+    idipo::Real,
+    iqhc::Real,
+    iqvc::Real,
     vars_qh::AbstractVector,
-    vars_qv::AbstractVector;
+    vars_qv::AbstractVector,
+    bdot::Real=0;
     tpsa::Bool=false,
 )
     length(vars_qh) == N_QH ||
         throw(ArgumentError("vars_qh must contain $N_QH values"))
     length(vars_qv) == N_QV ||
         throw(ArgumentError("vars_qv must contain $N_QV values"))
+    all(isfinite, (idipo, iqhc, iqvc, bdot)) ||
+        throw(ArgumentError("IDIPO, IQHC, IQVC, and bdot must be finite"))
+
+    quads = _BoosterLatticeTemplate.quad_strengths(idipo, iqhc, iqvc, bdot)
 
     for (i, factor) in enumerate(Iterators.flatten((vars_qh, vars_qv)))
         value = tpsa ? factor + simulator.quad_parameters[i] : factor
+        base_strength = if i <= N_QH
+            quads.horizontal
+        elseif V_QUAD_LABELS[i - N_QH] in (:D5, :F5)
+            quads.vertical_ear
+        else
+            quads.vertical
+        end
         simulator.lattice.line[simulator.quad_indices[i]].Bn1L =
-            simulator.quad_base_strengths[i] * value
+            base_strength * value
+    end
+    return nothing
+end
+
+function set_sextupole_current!(
+    simulator::BoosterSimulator,
+    ish::Real,
+    isv::Real,
+)
+    all(isfinite, (ish, isv)) ||
+        throw(ArgumentError("ISH and ISV must be finite"))
+
+    for element_index in simulator.sext_indices
+        element = simulator.lattice.line[element_index]
+        element.Bn2L = _BoosterLatticeTemplate.sextupole_integrated_field(
+            Symbol(element.name),
+            ish,
+            isv,
+            _BoosterLatticeTemplate.ISEBC8F8,
+            _BoosterLatticeTemplate.ISEBB4E4,
+        )
     end
     return nothing
 end
 
 """
-    orbit_and_quad_jacobian(simulator, currents_hc, currents_vc, vars_qh, vars_qv)
+    orbit_and_quad_jacobian(simulator, currents_hc, currents_vc,
+                            idipo, iqhc, iqvc, ish, isv,
+                            vars_qh, vars_qv, [bdot=0])
 
 Return the 33 selected BPM readings in millimetres and their `33 × 48`
-Jacobian with respect to the quadrupole factors.
+Jacobian with respect to the quadrupole factors. `IDIPO`, `IQHC`, `IQVC`,
+`ISH`, and `ISV` are evaluation inputs; `bdot` defaults to zero.
 """
 function orbit_and_quad_jacobian(
     simulator::BoosterSimulator,
     currents_hc::AbstractVector,
     currents_vc::AbstractVector,
+    idipo::Real,
+    iqhc::Real,
+    iqvc::Real,
+    ish::Real,
+    isv::Real,
     vars_qh::AbstractVector{<:Real},
     vars_qv::AbstractVector{<:Real},
+    bdot::Real=0,
 )
     # GTPSA has a process-global current descriptor. With one simulator per
     # process, selecting the cached descriptor here is sufficient; no lock or
@@ -218,7 +311,9 @@ function orbit_and_quad_jacobian(
     GTPSA.desc_current = simulator.descriptor
 
     set_corrector_currents!(simulator, currents_hc, currents_vc)
-    set_quad_factors!(simulator, vars_qh, vars_qv)
+    set_dipole_current!(simulator, idipo, bdot)
+    set_quad_strengths!(simulator, idipo, iqhc, iqvc, vars_qh, vars_qv, bdot)
+    set_sextupole_current!(simulator, ish, isv)
 
     sensitivity = simulator.sensitivity
     sensitivity.warm_start || fill!(simulator.closed_orbit_guess, 0.0)
@@ -238,7 +333,9 @@ function orbit_and_quad_jacobian(
     closed_orbit = result.v0
     sensitivity.warm_start && (simulator.closed_orbit_guess .= closed_orbit)
 
-    set_quad_factors!(simulator, vars_qh, vars_qv; tpsa=true)
+    set_quad_strengths!(
+        simulator, idipo, iqhc, iqvc, vars_qh, vars_qv, bdot; tpsa=true
+    )
     zero_tps = zero(first(simulator.phase_variables))
     phase_seed = vcat(simulator.phase_variables, zero_tps, zero_tps)
     one_turn = Bunch(
@@ -277,15 +374,25 @@ function orbit_and_quad_jacobian(
 end
 
 """
-    predict_orbits_and_jacobian(simulator, currents_hc, currents_vc, quad_factors)
+    predict_orbits_and_jacobian(simulator, currents_hc, currents_vc,
+                                idipo, iqhc, iqvc, ish, isv,
+                                quad_factors, [bdot=0])
 
-Evaluate all corrector settings. The Jacobian rows follow `vec(predictions)`.
+Evaluate all settings. Each main-magnet input can be a scalar shared by all
+settings or a vector with one value per setting. The Jacobian rows follow
+`vec(predictions)`.
 """
 function predict_orbits_and_jacobian(
     simulator::BoosterSimulator,
     currents_hc::AbstractMatrix,
     currents_vc::AbstractMatrix,
+    idipo,
+    iqhc,
+    iqvc,
+    ish,
+    isv,
     quad_factors::AbstractVector{<:Real},
+    bdot=0,
 )
     size(currents_hc, 2) == N_HC ||
         throw(ArgumentError("currents_hc must have $N_HC columns"))
@@ -295,8 +402,21 @@ function predict_orbits_and_jacobian(
         throw(ArgumentError("current matrices must have the same number of rows"))
     length(quad_factors) == N_QUADS ||
         throw(ArgumentError("quad_factors must contain $N_QUADS values"))
+    nsettings = size(currents_hc, 1)
+    machine_inputs = (
+        ("idipo", idipo),
+        ("iqhc", iqhc),
+        ("iqvc", iqvc),
+        ("ish", ish),
+        ("isv", isv),
+        ("bdot", bdot),
+    )
+    for (name, values) in machine_inputs
+        values isa Real || length(values) == nsettings ||
+            throw(ArgumentError("$name must be a scalar or contain $nsettings values"))
+    end
 
-    predictions = Matrix{Float64}(undef, size(currents_hc, 1), N_BPMS)
+    predictions = Matrix{Float64}(undef, nsettings, N_BPMS)
     jacobian = Matrix{Float64}(undef, length(predictions), N_QUADS)
     linear_indices = LinearIndices(predictions)
     vars_qh = @view quad_factors[1:N_QH]
@@ -307,8 +427,14 @@ function predict_orbits_and_jacobian(
             simulator,
             @view(currents_hc[setting, :]),
             @view(currents_vc[setting, :]),
+            idipo isa Real ? idipo : idipo[setting],
+            iqhc isa Real ? iqhc : iqhc[setting],
+            iqvc isa Real ? iqvc : iqvc[setting],
+            ish isa Real ? ish : ish[setting],
+            isv isa Real ? isv : isv[setting],
             vars_qh,
             vars_qv,
+            bdot isa Real ? bdot : bdot[setting],
         )
         predictions[setting, :] .= orbit
         for bpm in axes(predictions, 2)
@@ -323,10 +449,17 @@ function predict_orbits(
     simulator::BoosterSimulator,
     currents_hc::AbstractMatrix,
     currents_vc::AbstractMatrix,
+    idipo,
+    iqhc,
+    iqvc,
+    ish,
+    isv,
     quad_factors::AbstractVector{<:Real},
+    bdot=0,
 )
     predictions, _ = predict_orbits_and_jacobian(
-        simulator, currents_hc, currents_vc, quad_factors
+        simulator, currents_hc, currents_vc, idipo, iqhc, iqvc, ish, isv,
+        quad_factors, bdot
     )
     return predictions
 end
@@ -336,17 +469,26 @@ function ChainRulesCore.rrule(
     simulator::BoosterSimulator,
     currents_hc::AbstractMatrix,
     currents_vc::AbstractMatrix,
+    idipo,
+    iqhc,
+    iqvc,
+    ish,
+    isv,
     quad_factors::AbstractVector{<:Real},
+    bdot,
 )
     predictions, jacobian = predict_orbits_and_jacobian(
-        simulator, currents_hc, currents_vc, quad_factors
+        simulator, currents_hc, currents_vc, idipo, iqhc, iqvc, ish, isv,
+        quad_factors, bdot
     )
     function pullback(prediction_tangent)
         prediction_tangent = unthunk(prediction_tangent)
         factor_tangent = prediction_tangent isa AbstractZero ?
             ZeroTangent() :
             ProjectTo(quad_factors)(jacobian' * vec(prediction_tangent))
-        return NoTangent(), NoTangent(), NoTangent(), NoTangent(), factor_tangent
+        return NoTangent(), NoTangent(), NoTangent(), NoTangent(), NoTangent(),
+            NoTangent(), NoTangent(), NoTangent(), NoTangent(), factor_tangent,
+            NoTangent()
     end
     return predictions, pullback
 end
@@ -356,19 +498,37 @@ ReverseDiff.@grad_from_chainrules predict_orbits(
     simulator::BoosterSimulator,
     currents_hc::AbstractMatrix,
     currents_vc::AbstractMatrix,
+    idipo,
+    iqhc,
+    iqvc,
+    ish,
+    isv,
     quad_factors::ReverseDiff.TrackedArray,
+    bdot,
 )
 # DynamicPPL's product transform tracks the vector elements individually.
 ReverseDiff.@grad_from_chainrules predict_orbits(
     simulator::BoosterSimulator,
     currents_hc::AbstractMatrix,
     currents_vc::AbstractMatrix,
+    idipo,
+    iqhc,
+    iqvc,
+    ish,
+    isv,
     quad_factors::AbstractVector{<:ReverseDiff.TrackedReal},
+    bdot,
 )
 
 struct BoosterInferenceData
     currents_hc::Matrix{Float64}
     currents_vc::Matrix{Float64}
+    idipo::Vector{Float64}
+    iqhc::Vector{Float64}
+    iqvc::Vector{Float64}
+    ish::Vector{Float64}
+    isv::Vector{Float64}
+    bdot::Vector{Float64}
     observed_orbit_mm::Matrix{Float64}
     noise_std_mm::Matrix{Float64}
 end
@@ -378,12 +538,24 @@ function BoosterInferenceData(
     currents_vc::AbstractVector,
     observed_orbit_mm::AbstractVector;
     noise_std_mm,
+    idipo=_BoosterLatticeTemplate.IDIPO,
+    iqhc=_BoosterLatticeTemplate.IQHC,
+    iqvc=_BoosterLatticeTemplate.IQVC,
+    ish=_BoosterLatticeTemplate.ISH,
+    isv=_BoosterLatticeTemplate.ISV,
+    bdot=0,
 )
     return BoosterInferenceData(
         reshape(currents_hc, 1, :),
         reshape(currents_vc, 1, :),
         reshape(observed_orbit_mm, 1, :);
         noise_std_mm,
+        idipo,
+        iqhc,
+        iqvc,
+        ish,
+        isv,
+        bdot,
     )
 end
 
@@ -392,6 +564,12 @@ function BoosterInferenceData(
     currents_vc::AbstractMatrix,
     observed_orbit_mm::AbstractMatrix;
     noise_std_mm,
+    idipo=_BoosterLatticeTemplate.IDIPO,
+    iqhc=_BoosterLatticeTemplate.IQHC,
+    iqvc=_BoosterLatticeTemplate.IQVC,
+    ish=_BoosterLatticeTemplate.ISH,
+    isv=_BoosterLatticeTemplate.ISV,
+    bdot=0,
 )
     hc = Matrix{Float64}(currents_hc)
     vc = Matrix{Float64}(currents_vc)
@@ -409,7 +587,25 @@ function BoosterInferenceData(
         throw(ArgumentError("noise_std_mm must be scalar or match observations"))
     all(isfinite, noise) && all(>(0), noise) ||
         throw(ArgumentError("noise_std_mm must be positive and finite"))
-    return BoosterInferenceData(hc, vc, observed, noise)
+
+    nsettings = size(hc, 1)
+    operating_point = Vector{Float64}[]
+    machine_inputs = (
+        ("idipo", idipo),
+        ("iqhc", iqhc),
+        ("iqvc", iqvc),
+        ("ish", ish),
+        ("isv", isv),
+        ("bdot", bdot),
+    )
+    for (name, values) in machine_inputs
+        vector = values isa Real ? fill(Float64(values), nsettings) : Float64.(values)
+        length(vector) == nsettings ||
+            throw(ArgumentError("$name must be a scalar or contain $nsettings values"))
+        all(isfinite, vector) || throw(ArgumentError("$name values must be finite"))
+        push!(operating_point, vector)
+    end
+    return BoosterInferenceData(hc, vc, operating_point..., observed, noise)
 end
 
 function lognormal_quad_prior(log_std; center::Symbol=:median)
@@ -427,11 +623,20 @@ end
 Turing.@model function booster_model(
     data::BoosterInferenceData,
     simulator::BoosterSimulator,
-    quad_prior=lognormal_quad_prior(0.05),
+    quad_prior=lognormal_quad_prior(0.03),
 )
     quad_factors ~ quad_prior
     predicted_orbit_mm = predict_orbits(
-        simulator, data.currents_hc, data.currents_vc, quad_factors
+        simulator,
+        data.currents_hc,
+        data.currents_vc,
+        data.idipo,
+        data.iqhc,
+        data.iqvc,
+        data.ish,
+        data.isv,
+        quad_factors,
+        data.bdot,
     )
     for index in eachindex(data.observed_orbit_mm)
         Turing.@addlogprob! Turing.logpdf(
